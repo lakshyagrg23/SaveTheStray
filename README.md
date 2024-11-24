@@ -17,6 +17,20 @@ Stray animals on roadways pose significant challenges to road safety, leading to
 
 ---
 
+![Map Visualization](assets/images/map.png)
+
+![Reporting Page](assets/images/report.png)
+
+## Table of Contents
+- [Machine Learning Model](#machine-learning-model)
+- [Frontend](#frontend)
+- [How It Works](#how-it-works)
+- [Setup and Usage](#setup-and-usage)
+- [Future Work](#future-work)
+- [License](#license)
+
+---
+
 ## Machine Learning Model
 
 ### 1. Objective
