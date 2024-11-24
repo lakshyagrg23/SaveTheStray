@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Map - Stray Animal Reporting</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-br from-blue-500 to-indigo-700 min-h-screen text-white flex flex-col justify-center items-center">
+
+  <!-- Map Section -->
+  <main class="w-11/12 lg:w-3/4">
+    <h2 class="text-3xl font-extrabold text-center mb-6">Animal Sightings Map</h2>
+    <div id="map" class="h-96 w-full rounded-lg shadow-xl border-4 border-white mb-6"></div>
+    <div class="flex justify-center">
+      <button 
+        onclick="goToReport()" 
+        class="bg-gradient-to-r from-yellow-400 to-red-500 text-white py-3 px-10 rounded-full text-lg font-bold shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all"
+      >
+        Report Another Sighting
+      </button>
+    </div>
+  </main>
+
+  <script>
+    // Mapbox Access Token
+    mapboxgl.accessToken = 'pk.eyJ1IjoidGFyYW5nMyIsImEiOiJjbTN2aHpta2cwdHhyMmxzY3B6OG9ydzh4In0.hp3xx3PRPxu5I3NC9viPVQ'; // Replace with your Mapbox token
+
+    // Initialize Mapbox Map
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/streets-v11',
+      center: [78.9629, 20.5937], // Default center (Longitude, Latitude)
+      zoom: 4,
+    });
+
+    // Add zoom and rotation controls
+    map.addControl(new mapboxgl.NavigationControl());
+
+    // Retrieve the last reported location from localStorage
+    const lastReport = JSON.parse(localStorage.getItem('lastReport'));
+    if (lastReport) {
+      const geocodeURL = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+        lastReport.location
+      )}.json?access_token=${mapboxgl.accessToken}`;
+
+      fetch(geocodeURL)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.features && data.features.length > 0) {
+            const [longitude, latitude] = data.features[0].geometry.coordinates;
+
+            // Fly to the reported location
+            map.flyTo({
+              center: [longitude, latitude],
+              zoom: 14,
+              essential: true,
+            });
+
+            // Add a marker at the reported location
+            new mapboxgl.Marker({ color: 'red' })
+              .setLngLat([longitude, latitude])
+              .addTo(map);
+
+            // Add a translucent circle around the reported location (100-meter radius)
+            map.on('load', () => {
+              map.addSource('circle', {
+                type: 'geojson',
+                data: {
+                  type: 'Feature',
+                  geometry: {
+                    type: 'Point',
+                    coordinates: [longitude, latitude],
+                  },
+                },
+              });
+
+              map.addLayer({
+                id: 'circle-layer',
+                type: 'circle',
+                source: 'circle',
+                paint: {
+                  'circle-radius': 100, // Radius in pixels
+                  'circle-color': 'rgba(255, 255, 0, 0.4)', // Translucent yellow color
+                  'circle-stroke-color': 'yellow',
+                  'circle-stroke-width': 2,
+                },
+              });
+            });
+          } else {
+            alert('Unable to find the reported location.');
+          }
+        })
+        .catch((error) => {
+          console.error('Error fetching location:', error);
+        });
+    } else {
+      alert('No reported location found. Please report a location first.');
+    }
+
+    // Redirect to report page
+    function goToReport() {
+      window.location.href = 'report.html';
+    }
+  </script>
+</body>
+</html>

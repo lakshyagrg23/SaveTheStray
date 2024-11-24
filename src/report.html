@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report Stray Animal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Add animation for fade-in effect */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-fadeIn {
+      animation: fadeIn 1s ease-out;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 min-h-screen flex flex-col items-center justify-center">
+
+  <!-- Page Header -->
+  <header class="text-center text-white mb-8 animate-fadeIn">
+    <h1 class="text-4xl font-bold">Report Stray Animal</h1>
+    <p class="text-lg mt-2 font-medium">Help us keep track of stray animals in your area.</p>
+  </header>
+
+  <!-- Report Form -->
+  <main class="w-11/12 max-w-lg bg-white shadow-lg rounded-lg p-8 animate-fadeIn">
+    <h2 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Fill Out the Details</h2>
+    <form id="report-form" class="space-y-6">
+      <!-- Animal Count -->
+      <div>
+        <label for="animalCount" class="block text-sm font-medium text-gray-700">Animal Count</label>
+        <input id="animalCount" type="number" class="w-full mt-1 border border-gray-300 rounded-lg p-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter the number of animals">
+      </div>
+
+      <!-- Location -->
+      <div>
+        <label for="location" class="block text-sm font-medium text-gray-700">Location</label>
+        <input id="location" type="text" class="w-full mt-1 border border-gray-300 rounded-lg p-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter the location">
+      </div>
+
+      <!-- Time of Day -->
+      <div>
+        <label for="timeOfDay" class="block text-sm font-medium text-gray-700">Time of Day</label>
+        <select id="timeOfDay" class="w-full mt-1 border border-gray-300 rounded-lg p-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <option value="morning">Morning</option>
+          <option value="afternoon">Afternoon</option>
+          <option value="evening">Evening</option>
+        </select>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="button" id="submitBtn" class="w-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white py-3 rounded-lg font-semibold text-lg shadow-md hover:from-blue-600 hover:to-indigo-600 hover:shadow-lg transform hover:scale-105 transition-all">
+        Submit Report
+      </button>
+    </form>
+  </main>
+
+  <!-- JavaScript -->
+  <script>
+    document.getElementById("submitBtn").addEventListener("click", () => {
+      const location = document.getElementById("location").value.trim();
+      const animalCount = document.getElementById("animalCount").value.trim();
+      const timeOfDay = document.getElementById("timeOfDay").value;
+
+      if (location && animalCount) {
+        // Save report details to localStorage
+        const report = {
+          location,
+          animalCount,
+          timeOfDay,
+        };
+        localStorage.setItem("lastReport", JSON.stringify(report));
+
+        // Redirect to the map page
+        window.location.href = "map.html";
+      } else {
+        alert("Please fill out all the fields.");
+      }
+    });
+  </script>
+</body>
+</html>
